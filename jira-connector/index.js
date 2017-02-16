@@ -17,6 +17,7 @@ var comment = require('./api/comment');
 var component = require('./api/component');
 var customFieldOption = require('./api/customFieldOption');
 var dashboard = require('./api/dashboard');
+var epic = require('./api/epic')
 var errorStrings = require('./lib/error');
 var field = require('./api/field');
 var filter = require('./api/filter');
@@ -72,6 +73,7 @@ var worklog = require('./api/worklog');
  * @property {ComponentClient} component
  * @property {CustomFieldOptionClient} customFieldOption
  * @property {DashboardClient} dashboard
+ * @property {AgileEpicClient} epic
  * @property {FieldClient} field
  * @property {FilterClient} filter
  * @property {GroupClient} group
@@ -132,8 +134,8 @@ var worklog = require('./api/worklog');
  *      Default - native Promise.
  */
 
-var JiraClient = module.exports = function (config) {
-    if(!config.host) {
+var JiraClient = module.exports = function(config) {
+    if (!config.host) {
         throw new Error(errorStrings.NO_HOST_ERROR);
     }
     this.host = config.host;
@@ -163,7 +165,7 @@ var JiraClient = module.exports = function (config) {
     } else if (config.basic_auth) {
         if (config.basic_auth.base64) {
             this.basic_auth = {
-              base64: config.basic_auth.base64
+                base64: config.basic_auth.base64
             }
         } else {
             if (!config.basic_auth.username) {
@@ -193,6 +195,7 @@ var JiraClient = module.exports = function (config) {
     this.component = new component(this);
     this.customFieldOption = new customFieldOption(this);
     this.dashboard = new dashboard(this);
+    this.epic = new epic(this);
     this.field = new field(this);
     this.filter = new filter(this);
     this.group = new group(this);
@@ -231,7 +234,7 @@ var JiraClient = module.exports = function (config) {
     this.worklog = new worklog(this);
 };
 
-(function () {
+(function() {
 
     /**
      * Simple utility to build a REST endpoint URL for the Jira API.
@@ -241,7 +244,7 @@ var JiraClient = module.exports = function (config) {
      * @param path The path of the URL without concern for the root of the REST API.
      * @returns {string} The constructed URL.
      */
-    this.buildURL = function (path) {
+    this.buildURL = function(path) {
         var apiBasePath = this.path_prefix + 'rest/api/';
         var version = this.apiVersion;
         var requestUrl = url.format({
@@ -262,7 +265,7 @@ var JiraClient = module.exports = function (config) {
      * @param path The path of the URL without concern for the root of the REST API.
      * @returns {string} The constructed URL.
      */
-    this.buildAgileURL = function (path) {
+    this.buildAgileURL = function(path) {
         var apiBasePath = this.path_prefix + 'rest/agile/';
         var version = this.agileApiVersion;
         var requestUrl = url.format({
@@ -283,7 +286,7 @@ var JiraClient = module.exports = function (config) {
      * @param path The path of the URL without concern for the root of the REST API.
      * @returns {string} The constructed URL.
      */
-    this.buildAuthURL = function (path) {
+    this.buildAuthURL = function(path) {
         var apiBasePath = this.path_prefix + 'rest/auth/';
         var version = this.authApiVersion;
         var requestUrl = url.format({
@@ -304,7 +307,7 @@ var JiraClient = module.exports = function (config) {
      * @param path The path of the URL without concern for the root of the REST API.
      * @returns {string} The constructed URL.
      */
-    this.buildWebhookURL = function (path) {
+    this.buildWebhookURL = function(path) {
         var apiBasePath = this.path_prefix + 'rest/webhooks/';
         var version = this.webhookApiVersion;
         var requestUrl = url.format({
@@ -327,17 +330,17 @@ var JiraClient = module.exports = function (config) {
      * @param {string} [successString] If supplied, this is reported instead of the response body.
      * @return {Promise} Resolved with APIs response or rejected with error
      */
-    this.makeRequest = function (options, callback, successString) {
+    this.makeRequest = function(options, callback, successString) {
         if (this.oauthConfig) {
             options.oauth = this.oauthConfig;
         } else if (this.basic_auth) {
             if (this.basic_auth.base64) {
-              if (!options.headers) {
-                options.headers = {}
-              }
-              options.headers['Authorization'] = 'Basic ' + this.basic_auth.base64
+                if (!options.headers) {
+                    options.headers = {}
+                }
+                options.headers['Authorization'] = 'Basic ' + this.basic_auth.base64
             } else {
-              options.auth = this.basic_auth;
+                options.auth = this.basic_auth;
             }
         }
         if (this.cookie_jar) {
@@ -345,23 +348,23 @@ var JiraClient = module.exports = function (config) {
         }
 
         if (callback) {
-            request(options, function (err, response, body) {
+            request(options, function(err, response, body) {
                 if (err || response.statusCode.toString()[0] != 2) {
                     return callback(err ? err : body, null, response);
                 }
 
-            if (typeof body == 'string') {
-                try {
-                    body = JSON.parse(body);
-                } catch (jsonErr) {
-                    return callback(jsonErr, null, response);
+                if (typeof body == 'string') {
+                    try {
+                        body = JSON.parse(body);
+                    } catch (jsonErr) {
+                        return callback(jsonErr, null, response);
+                    }
                 }
-            }
 
                 return callback(null, successString ? successString : body, response);
             });
         } else if (this.promise) {
-            return new this.promise(function (resolve, reject) {
+            return new this.promise(function(resolve, reject) {
 
                 var req = request(options);
 
@@ -376,7 +379,7 @@ var JiraClient = module.exports = function (config) {
                     response.on('data', push);
 
                     // Data collected
-                    response.on('end', function () {
+                    response.on('end', function() {
 
                         var result = body.join('');
 
@@ -384,7 +387,7 @@ var JiraClient = module.exports = function (config) {
                         if (result[0] === '[' || result[0] === '{') {
                             try {
                                 result = JSON.parse(result);
-                            } catch(e) {
+                            } catch (e) {
                                 // nothing to do
                             }
                         }
