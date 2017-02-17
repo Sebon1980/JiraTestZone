@@ -2,9 +2,9 @@
 
 module.exports = AgileEpicClient;
 /**
- * Used to access Jira REST endpoints in '/rest/agile/1.0/dashboard'
+ * Used to access Jira REST endpoints in '/rest/agile/1.0/epic'
  * @param {JiraClient} jiraClient
- * @constructor AgileBoardClient
+ * @constructor AgileEpicClient
  */
 
 function AgileEpicClient(jiraClient) {
@@ -13,7 +13,7 @@ function AgileEpicClient(jiraClient) {
      * GEt a list of all issues associated with an agile epic   
      * 
      * @method getIssuesForEpic
-     * @memberOf AgileEpicClient#
+     * @memberOf AgileEpicClient
      * @param opts The request options to send to the Jira API
      * @param [opts.type] Limits returning boards of a specific type: `scrum` or `kanban`.
      * @param [opts.startAt] The index of the first dashboard to return (0-based). must be 0 or a multiple of

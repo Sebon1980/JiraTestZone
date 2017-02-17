@@ -10,11 +10,11 @@ var jira = new JiraClient({
     }
 });
 
-module.exports.epics = function() {
+module.exports.epicsOfSprint = function(sprintId) {
     return new Promise((resolve, reject) => {
         var opts = {
             type: "",
-            sprintId: 2,
+            sprintId: sprintId,
             startAt: 1,
             maxResults: 25
         };
@@ -34,29 +34,29 @@ module.exports.epics = function() {
         })
     });
 }
-module.exports.issuesOfEpic = function(id) {
+module.exports.issuesOfEpic = function(epicId) {
     return new Promise((resolve, reject) => {
         var opts = {
             type: "",
-            epicId: id,
+            epicId: epicId,
             sprintId: 2,
             startAt: 0,
             maxResults: 25
         };
         jira.epic.getIssuesForEpic(opts).then((result) => {
-            var temp = {};
             var epicIssues = [];
-            epicIssues.push(result)
 
             result.issues.forEach(function(issue) {
-                var id = issue.id;
-                if (temp[id] === undefined) {
-                    temp[id] = issue.id;
-
-                    epicIssues.push(issue.fields.summary);
-                }
+                const entry = {
+                    id: issue.id,
+                    key: issue.key,
+                    adress: issue.self,
+                    summary: issue.fields.summary,
+                    assignee: issue.fields.assignee.displayName,
+                    status: issue.fields.status.name
+                };
+                epicIssues.push(entry);
             });
-
             resolve(epicIssues);
         }).catch((error) => {
             reject(error);
