@@ -63,3 +63,18 @@ module.exports.issuesOfEpic = function(epicId) {
         })
     });
 }
+module.exports.allSprintsOfVersion = function(versionId) {
+    return new Promise((resolve, reject) => {
+        var opts = {
+            type: "",
+            versionId: versionId,
+            startAt: 0,
+            maxResults: 25
+        };
+        jira.version.getVersion(opts).then((result) => {
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
