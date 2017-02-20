@@ -10,12 +10,14 @@ var jira = new JiraClient({
     }
 });
 
-module.exports.epicsOfSprint = function(sprintId) {
+
+
+module.exports.epicsOfSprint = function() {
     return new Promise((resolve, reject) => {
         var opts = {
             type: "",
-            sprintId: sprintId,
-            startAt: 1,
+            sprintId: 2,
+            startAt: 0,
             maxResults: 25
         };
         jira.sprint.getSprintIssues(opts).then((result) => {
@@ -63,7 +65,7 @@ module.exports.issuesOfEpic = function(epicId) {
         })
     });
 }
-module.exports.allSprintsOfVersion = function(versionId) {
+module.exports.getVersionInfo = function(versionId) {
     return new Promise((resolve, reject) => {
         var opts = {
             type: "",
