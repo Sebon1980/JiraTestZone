@@ -71,16 +71,24 @@ module.exports.statusOfEpic = function(eId) {
             startAt: 0,
             maxResults: 25
         };
+        var status = {
+            total: 0,
+            inProgress: 0,
+            done: 0,
+            toDo: 0,
+            issues: []
+        }
         jira.epic.getIssuesForEpic(opts).then((result) => {
-            var epicIssues = [];
-            var status = {
-                total: 0,
-                inProgress: 0,
-                done: 0,
-                toDo: 0
-            }
-
             result.issues.forEach(function(issue) {
+                const entry = {
+                    id: issue.id,
+                    key: issue.key,
+                    adress: issue.self,
+                    summary: issue.fields.summary,
+                    assignee: issue.fields.assignee.displayName,
+                    status: issue.fields.status.name
+                };
+                status.issues.push(entry);
                 status.total++;
                 if (issue.fields.status.name === "Done") {
                     status.done++;
