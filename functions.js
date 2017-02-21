@@ -46,7 +46,6 @@ module.exports.issuesOfEpic = function(eId) {
         };
         jira.epic.getIssuesForEpic(opts).then((result) => {
             var epicIssues = [];
-
             result.issues.forEach(function(issue) {
                 const entry = {
                     id: issue.id,
@@ -64,6 +63,39 @@ module.exports.issuesOfEpic = function(eId) {
         })
     });
 }
+module.exports.statusOfEpic = function(eId) {
+    return new Promise((resolve, reject) => {
+        var opts = {
+            type: "",
+            epicId: eId,
+            startAt: 0,
+            maxResults: 25
+        };
+        jira.epic.getIssuesForEpic(opts).then((result) => {
+            var epicIssues = [];
+            var status = {
+                total: 0,
+                inProgress: 0,
+                done: 0,
+                toDo: 0
+            }
+
+            result.issues.forEach(function(issue) {
+                status.total++;
+                if (issue.fields.status.name === "Done") {
+                    status.done++;
+                } else if (issue.fields.status.name == "In Progress") {
+                    status.inProgress++;
+                } else
+                    status.toDo++;
+            });
+            resolve(status);
+        }).catch((error) => {
+            reject(error);
+        })
+    });
+}
+
 module.exports.getVersionInfo = function(vId) {
     return new Promise((resolve, reject) => {
         var opts = {

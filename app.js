@@ -17,6 +17,10 @@ function versionTest(vId) {
     return test.getVersionInfo(vId)
 }
 
+function statusTest(eId) {
+    return test.statusOfEpic(eId)
+}
+
 
 
 
@@ -32,6 +36,14 @@ app.get('/epic/:sId', function(req, res) {
         })
         .catch((err) => { res.send(err) })
 })
+app.get('/status/:eId', function(req, res) {
+    statusTest(req.params.eId)
+        .then((resp) => {
+            res.send(resp)
+        })
+        .catch((err) => { res.send(err) })
+})
+
 app.get('/issue/:eId', function(req, res) {
     issueTest(req.params.eId)
         .then((resp) => {
