@@ -5,16 +5,16 @@ const hostname = '127.0.0.1';
 const port = 3000;
 
 
-function epicTest(sprintId) {
-    return test.epicsOfSprint();
+function epicTest(sId) {
+    return test.epicsOfSprint(sId);
 }
 
-function issueTest(epicId) {
-    return test.issuesOfEpic(epicId)
+function issueTest(eId) {
+    return test.issuesOfEpic(eId)
 }
 
-function versionTest(versionId) {
-    return test.getVersionInfo(versionId)
+function versionTest(vId) {
+    return test.getVersionInfo(vId)
 }
 
 
@@ -25,22 +25,22 @@ function versionTest(versionId) {
 
 
 
-app.get('/epic', function(req, res) {
-    epicTest()
+app.get('/epic/:sId', function(req, res) {
+    epicTest(req.params.sId)
         .then((resp) => {
             res.send(resp)
         })
         .catch((err) => { res.send(err) })
 })
-app.get('/issue', function(req, res) {
-    issueTest(10100)
+app.get('/issue/:eId', function(req, res) {
+    issueTest(req.params.eId)
         .then((resp) => {
             res.send(resp)
         })
         .catch((err) => { res.send(err) })
 })
-app.get('/version', function(req, res) {
-    versionTest()
+app.get('/version/:vId', function(req, res) {
+    versionTest(req.params.vId)
         .then((resp) => {
             res.send(resp)
         })

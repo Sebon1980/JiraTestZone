@@ -1,6 +1,6 @@
 var JiraClient = require('jira-connector');
-var express = require('express')
-var app = express()
+var express = require('express');
+var app = express();
 
 var jira = new JiraClient({
     host: 'neumannsebastian.atlassian.net',
@@ -12,11 +12,11 @@ var jira = new JiraClient({
 
 
 
-module.exports.epicsOfSprint = function() {
+module.exports.epicsOfSprint = function(sId) {
     return new Promise((resolve, reject) => {
         var opts = {
             type: "",
-            sprintId: 2,
+            sprintId: sId,
             startAt: 0,
             maxResults: 25
         };
@@ -36,12 +36,11 @@ module.exports.epicsOfSprint = function() {
         })
     });
 }
-module.exports.issuesOfEpic = function(epicId) {
+module.exports.issuesOfEpic = function(eId) {
     return new Promise((resolve, reject) => {
         var opts = {
             type: "",
-            epicId: epicId,
-            sprintId: 2,
+            epicId: eId,
             startAt: 0,
             maxResults: 25
         };
@@ -65,11 +64,11 @@ module.exports.issuesOfEpic = function(epicId) {
         })
     });
 }
-module.exports.getVersionInfo = function(versionId) {
+module.exports.getVersionInfo = function(vId) {
     return new Promise((resolve, reject) => {
         var opts = {
             type: "",
-            versionId: versionId,
+            versionId: vId,
             startAt: 0,
             maxResults: 25
         };
@@ -78,5 +77,16 @@ module.exports.getVersionInfo = function(versionId) {
         }).catch((error) => {
             reject(error);
         })
+    })
+}
+
+module.exports.getStatusOfVersion = function(vId) {
+    return new Promise((resolve, reject) => {
+        var opts = {
+            type: "",
+            versionId: vId,
+            startAt: 0,
+            maxResults: 25
+        };
     })
 }
