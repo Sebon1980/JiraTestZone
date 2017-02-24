@@ -11,7 +11,59 @@ var jira = new JiraClient({
 });
 
 
+/** 
+ * return a new builded object of an epic with just the required data for Plugin
+ * @param {Object} opts The options to pass to the API.  Note that this
+ *        object must contain EITHER an epicId;
+ * 
+ */
 
+var detailsOfEpic = function(eId) {
+    return new Promise((resolve, reject) => {
+        var opts = {
+            type: "",
+            epicId: eId,
+            startAt: 0,
+            maxResults: 25
+        };
+        var epic = {
+            epicName: "",
+            epicId: opts.epicId,
+            issuesTotal: 0,
+            issuesInProgress: 0,
+            issuesDone: 0,
+            issuesToDo: 0,
+            issues: []
+        }
+
+        jira.epic.getIssuesForEpic(opts).then((result) => {
+            result.issues.forEach(function(issue) {
+                epic.epicName = issue.fields.epic.name;
+                const entry = {
+                    id: issue.id,
+                    key: issue.key,
+                    adress: issue.self,
+                    summary: issue.fields.summary,
+                    //assignee: issue.fields.assignee.displayName || 'undefined',
+                    status: issue.fields.status.name,
+                };
+
+                epic.issues.push(entry);
+                epic.issuesTotal++;
+                if (issue.fields.status.name === "Done") {
+                    epic.issuesDone++;
+                } else if (issue.fields.status.name == "In Progress") {
+                    epic.issuesInProgress++;
+                } else
+                    epic.issuesToDo++;
+            });
+            resolve(epic);
+        }).catch((error) => {
+            reject(error);
+        })
+    });
+}
+module.exports.detailsOfEpic = detailsOfEpic;
 module.exports.epicsOfSprint = function(sId) {
     return new Promise((resolve, reject) => {
         var opts = {
@@ -26,78 +78,16 @@ module.exports.epicsOfSprint = function(sId) {
             result.issues.forEach(function(issue) {
                 var id = issue.fields.epic.id;
                 if (temp[id] === undefined) {
-                    temp[id] = issue.fields.epic;
-                    epics.push(issue.fields.epic);
+                    temp[id] = issue.fields.epic.id;
+                    epics.push(detailsOfEpic(id));
                 }
             });
-            resolve(epics);
-        }).catch((error) => {
-            reject(error);
-        })
-    });
-}
-module.exports.issuesOfEpic = function(eId) {
-    return new Promise((resolve, reject) => {
-        var opts = {
-            type: "",
-            epicId: eId,
-            startAt: 0,
-            maxResults: 25
-        };
-        jira.epic.getIssuesForEpic(opts).then((result) => {
-            var epicIssues = [];
-            result.issues.forEach(function(issue) {
-                const entry = {
-                    id: issue.id,
-                    key: issue.key,
-                    adress: issue.self,
-                    summary: issue.fields.summary,
-                    assignee: issue.fields.assignee.displayName,
-                    status: issue.fields.status.name
-                };
-                epicIssues.push(entry);
+            Promise.all(epics).then(
+                (result) => {
+                    resolve(result)
+                }).catch((error) => {
+                reject(error);
             });
-            resolve(epicIssues);
-        }).catch((error) => {
-            reject(error);
-        })
-    });
-}
-module.exports.statusOfEpic = function(eId) {
-    return new Promise((resolve, reject) => {
-        var opts = {
-            type: "",
-            epicId: eId,
-            startAt: 0,
-            maxResults: 25
-        };
-        var status = {
-            total: 0,
-            inProgress: 0,
-            done: 0,
-            toDo: 0,
-            issues: []
-        }
-        jira.epic.getIssuesForEpic(opts).then((result) => {
-            result.issues.forEach(function(issue) {
-                const entry = {
-                    id: issue.id,
-                    key: issue.key,
-                    adress: issue.self,
-                    summary: issue.fields.summary,
-                    assignee: issue.fields.assignee.displayName,
-                    status: issue.fields.status.name
-                };
-                status.issues.push(entry);
-                status.total++;
-                if (issue.fields.status.name === "Done") {
-                    status.done++;
-                } else if (issue.fields.status.name == "In Progress") {
-                    status.inProgress++;
-                } else
-                    status.toDo++;
-            });
-            resolve(status);
         }).catch((error) => {
             reject(error);
         })

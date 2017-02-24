@@ -9,23 +9,13 @@ function epicTest(sId) {
     return test.epicsOfSprint(sId);
 }
 
-function issueTest(eId) {
-    return test.issuesOfEpic(eId)
-}
-
 function versionTest(vId) {
     return test.getVersionInfo(vId)
 }
 
-function statusTest(eId) {
-    return test.statusOfEpic(eId)
+function epicDetails(eId) {
+    return test.detailsOfEpic(eId)
 }
-
-
-
-
-
-
 
 
 
@@ -36,21 +26,15 @@ app.get('/epic/:sId', function(req, res) {
         })
         .catch((err) => { res.send(err) })
 })
-app.get('/status/:eId', function(req, res) {
-    statusTest(req.params.eId)
+app.get('/epicDetails/:eId', function(req, res) {
+    epicDetails(req.params.eId)
         .then((resp) => {
             res.send(resp)
         })
         .catch((err) => { res.send(err) })
 })
 
-app.get('/issue/:eId', function(req, res) {
-    issueTest(req.params.eId)
-        .then((resp) => {
-            res.send(resp)
-        })
-        .catch((err) => { res.send(err) })
-})
+
 app.get('/version/:vId', function(req, res) {
     versionTest(req.params.vId)
         .then((resp) => {

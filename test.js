@@ -34,7 +34,7 @@ app.get('/getAllEpics', function(req, res) {
         var opts = {
             type: "",
             sprintId: 2,
-            startAt: 1,
+            startAt: 0,
             maxResults: 25
         };
         jira.sprint.getSprintIssues(opts).then((result) => {
@@ -60,7 +60,7 @@ app.get('/getAllSprintIssues', function(req, res) {
         var opts = {
             type: "",
             sprintId: 2,
-            startAt: 1,
+            startAt: 0,
             maxResults: ""
         }
         jira.sprint.getSprintIssues(opts).then((result) => {
@@ -75,7 +75,7 @@ app.get('/getBoards', function(req, res) {
 
     var opts = {
         type: "",
-        startAt: 1,
+        startAt: 0,
         maxResults: 0
     }
     jira.board.getAllBoards(opts).then((result) => {
