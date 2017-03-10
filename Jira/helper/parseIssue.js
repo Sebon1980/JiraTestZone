@@ -7,6 +7,7 @@ module.exports = function parseIssue(issue) {
         id,
         key,
         adress: self,
+        sprintId: issue.fields.sprint.id,
         summary,
         assigneeName,
         epicName: issue.fields.epic.name,

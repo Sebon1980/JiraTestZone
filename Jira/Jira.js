@@ -1,5 +1,5 @@
 const JiraClient = require('jira-connector');
-const { parseEpic } = require('./helper');
+const { parseEpic, parseSprint } = require('./helper');
 
 class Jira {
 
@@ -14,9 +14,20 @@ class Jira {
             startAt: 0,
             maxResults: 25
         };
-        return this.connector.epic.getIssuesForEpic(opts).then((result) => parseEpic(epicId, result));
+        return this.connector.epic.getIssuesForEpic(opts)
+            .then((result) => parseEpic(epicId, result));
     }
+    detailsOfSprint(sprintId) {
+        var opts = {
+            sprintId,
+            type: "",
+            startAt: 0,
+            maxResults: 25
 
+        };
+        return this.connector.sprint.getSprintIssues(opts)
+            .then((result) => parseSprint(sprintId, result));
+    }
 }
 
 module.exports = Jira;

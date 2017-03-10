@@ -68,7 +68,7 @@ module.exports.epicsOfSprint = function(sId) {
     return new Promise((resolve, reject) => {
         var opts = {
             type: "",
-            sprintId: sId,
+            sprintId,
             startAt: 0,
             maxResults: 25
         };
@@ -94,11 +94,11 @@ module.exports.epicsOfSprint = function(sId) {
     });
 }
 
-module.exports.getVersionInfo = function(vId) {
+module.exports.getVersionInfo = function(versionId) {
     return new Promise((resolve, reject) => {
         var opts = {
             type: "",
-            versionId: vId,
+            versionId,
             startAt: 0,
             maxResults: 25
         };

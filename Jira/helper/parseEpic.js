@@ -1,9 +1,10 @@
 const parseIssue = require('./parseIssue');
 
-module.exports = function parseEpic(id, data) {
+module.exports = function parseEpic(epicId, data) {
     var epic = {
-        id,
+        epicId,
         epicName: "",
+        sprintId: "",
         issuesTotal: data.issues.length,
         issuesInProgress: 0,
         issuesDone: 0,
@@ -14,6 +15,7 @@ module.exports = function parseEpic(id, data) {
     data.issues.forEach((currentIssue) => {
         const issue = parseIssue(currentIssue);
         epic.epicName = issue.epicName;
+        epic.sprintId = issue.sprintId;
 
         switch (issue.status) {
             case 'Done':
